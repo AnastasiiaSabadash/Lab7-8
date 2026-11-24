@@ -20,47 +20,51 @@ provider "aws" {
   region = "eu-north-1"
 }
 
-resource "aws_security_group" "web_app" {
-  name        = "web_app"
-  description = "security group"
+variable "REPOSITORY_URI" {
+  type = string
+}
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_lightsail_container_service" "flask_application" {
+  name  = "flask-app"
+  power = "nano"
+  scale = 1
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  private_registry_access {
+    ecr_image_puller_role {
+      is_active = true
+    }
   }
 
   tags = {
-    Name = "web_app"
+    version = "1.0.0"
   }
 }
 
-resource "aws_instance" "webapp_instance" {
-  ami                    = "ami-02ec8f3d1073c7e67"
-  instance_type          = "t3.micro"
-  vpc_security_group_ids = [aws_security_group.web_app.id]
+resource "aws_lightsail_container_service_deployment_version" "flask_app_deployment" {
+  container {
+    container_name = "flask-application"
+    image          = "${var.REPOSITORY_URI}:latest"
 
-  tags = {
-    Name = "webapp_instance"
+    ports = {
+      # Consistent with the port exposed by the Dockerfile and app.py
+      8080 = "HTTP"
+    }
   }
-}
 
-output "instance_public_ip" {
-  value     = aws_instance.webapp_instance.public_ip
-  sensitive = true
+  public_endpoint {
+    container_name = "flask-application"
+    # Consistent with the port exposed by the Dockerfile and app.py
+    container_port = 8080
+
+    health_check {
+      healthy_threshold   = 2
+      unhealthy_threshold = 2
+      timeout_seconds     = 2
+      interval_seconds    = 5
+      path                = "/"
+      success_codes       = "200-499"
+    }
+  }
+
+  service_name = aws_lightsail_container_service.flask_application.name
 }
