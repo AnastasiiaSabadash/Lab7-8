@@ -10,12 +10,13 @@ terraform {
 
 # Configure the AWS provider
 provider "aws" {
-  region     = "eu-north-1"
+  region = "eu-north-1"
 }
 
 resource "aws_security_group" "web_app" {
   name        = "web_app"
   description = "security group"
+
   ingress {
     from_port   = 80
     to_port     = 80
@@ -23,12 +24,13 @@ resource "aws_security_group" "web_app" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
- ingress {
+  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   egress {
     from_port   = 0
     to_port     = 65535
@@ -36,15 +38,16 @@ resource "aws_security_group" "web_app" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags= {
+  tags = {
     Name = "web_app"
   }
 }
 
 resource "aws_instance" "webapp_instance" {
-  ami           = "ami-02ec8f3d1073c7e67"
-  instance_type = "t3.micro"
-  security_groups= ["web_app"]
+  ami                    = "ami-02ec8f3d1073c7e67"
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = [aws_security_group.web_app.id]
+
   tags = {
     Name = "webapp_instance"
   }
