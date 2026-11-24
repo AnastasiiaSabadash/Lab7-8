@@ -1,5 +1,6 @@
-FROM python:3.10-slim
+FROM python:3
 ADD app.py /
-RUN pip install --no-cache-dir --break-system-packages flask flask_restful
+RUN pip install flask
+RUN pip install flask_restful
 EXPOSE 8080
-CMD ["python", "./app.py"]
+CMD [ "python", "./app.py" ]

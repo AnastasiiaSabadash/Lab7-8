@@ -59,8 +59,8 @@ resource "aws_lightsail_container_service_deployment_version" "flask_app_deploym
     health_check {
       healthy_threshold   = 2
       unhealthy_threshold = 2
-      timeout_seconds     = 2
-      interval_seconds    = 5
+      timeout_seconds     = 5
+      interval_seconds    = 10
       path                = "/"
       success_codes       = "200-499"
     }
