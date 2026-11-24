@@ -10,7 +10,7 @@ terraform {
 
 # Configure the AWS provider
 provider "aws" {
-  region     = "eu-central-1"
+  region     = "eu-north-1"
 }
 
 resource "aws_security_group" "web_app" {
@@ -42,8 +42,8 @@ resource "aws_security_group" "web_app" {
 }
 
 resource "aws_instance" "webapp_instance" {
-  ami           = "ami-0669b163befffbdfc"
-  instance_type = "t2.micro"
+  ami           = "ami-02ec8f3d1073c7e67"
+  instance_type = "t3.micro"
   security_groups= ["web_app"]
   tags = {
     Name = "webapp_instance"
