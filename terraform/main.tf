@@ -6,6 +6,13 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  backend "s3" {
+    bucket         = "terraform-state-bucket-sabadash"
+    key            = "terraform.tfstate"
+    region         = "eu-north-1"
+    dynamodb_table = "my-lab-tf-lockid"
+  }
 }
 
 # Configure the AWS provider
