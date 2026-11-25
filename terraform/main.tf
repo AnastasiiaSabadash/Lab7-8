@@ -26,7 +26,7 @@ variable "REPOSITORY_URI" {
 
 resource "aws_lightsail_container_service" "flask_application" {
   name  = "flask-app"
-  power = "nano"
+  power = "micro"
   scale = 1
 
   private_registry_access {
@@ -58,9 +58,9 @@ resource "aws_lightsail_container_service_deployment_version" "flask_app_deploym
 
     health_check {
       healthy_threshold   = 2
-      unhealthy_threshold = 10
-      timeout_seconds     = 10
-      interval_seconds    = 30
+      unhealthy_threshold = 2
+      timeout_seconds     = 2
+      interval_seconds    = 5
       path                = "/"
       success_codes       = "200-499"
     }
